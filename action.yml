@@ -1,5 +1,5 @@
 name: 'Minify-JS Action'
-description: 'Github action to minify html, javascript and css files, using @minify package'
+description: 'Github action to minify html, javascript and css files'
 
 inputs:
   directory:
