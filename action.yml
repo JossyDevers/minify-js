@@ -3,11 +3,14 @@ description: 'Github action to minify html, javascript and css files'
 
 inputs:
   directory:
-    description: "File to minify, (By default it minifies in all routes)"
+    description: "File to minify or a folder containing files to minify. By default, all files in current folder and its subfolders will be minified"
     required: false
   output:
-    description: "Path where the minified files will be saved (By default the minified files will be saved in the original file path)"
+    description: "Path where the minified files will be saved. By default, the minified files will be saved in the original file path"
     required: false
+  add_suffix:
+    description: "Indicates if the output files should have the suffix '.min' added after the name. Default is true"
+    required: false  
 
 runs:
   using: 'docker'

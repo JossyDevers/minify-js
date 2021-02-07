@@ -1,0 +1,109 @@
+slack_image: &slack_image
+  docker:
+    - image: devatherock/simple-slack:0.5.0
+      auth:
+        username: $DOCKER_USERNAME
+        password: $DOCKER_PASSWORD
+
+work_directory: &work_directory
+  working_directory: ~/minify-js
+
+resource_class: &resource_class
+  resource_class: small
+  
+executors:
+  docker-executor:
+    docker:
+      - image: cimg/openjdk:11.0
+        auth:
+          username: $DOCKER_USERNAME
+          password: $DOCKER_PASSWORD
+    <<: *resource_class
+    <<: *work_directory  
+
+version: 2.1
+jobs:
+  publish:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: |
+          TAG=${CIRCLE_SHA1:0:8}
+          docker build -t devatherock/minify-js:$TAG .
+          docker tag devatherock/minify-js:$TAG devatherock/minify-js:latest
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker push devatherock/minify-js:$TAG
+          docker push devatherock/minify-js:latest
+          
+  publish_release:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: |
+          TAG=${CIRCLE_TAG#v}
+          DEV_TAG=${CIRCLE_SHA1:0:8}
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker pull devatherock/minify-js:$DEV_TAG
+          docker tag devatherock/minify-js:$DEV_TAG devatherock/minify-js:$TAG
+          docker push devatherock/minify-js:$TAG 
+
+  docker_build_dry_run:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build .
+
+  notify:
+    <<: *slack_image
+    <<: *resource_class
+    environment:
+      TEXT: "Success: {{.CircleBuildUrl}} by {{.CircleUsername}}"
+      COLOR: "#33ad7f"
+      CHANNEL: general
+      TITLE: "Build completed"
+    steps:
+      - run: /bin/simpleslack
+
+workflows:
+  version: 2.1
+  docker_publish:
+    jobs:
+      - publish:
+          context:
+            - docker-credentials
+          filters:
+            branches:
+              only: master
+      - notify:
+          context:
+            - docker-credentials
+            - slack-webhook
+          requires:
+            - publish
+  release:
+    jobs:
+      - publish_release:
+          context:
+            - docker-credentials
+          filters:
+            branches:
+              only: non-existent-branch
+            tags:
+              only: /^v[0-9\.]+$/
+      - notify:
+          context:
+            - docker-credentials
+            - slack-webhook
+          requires:
+            - publish_release
+  pr_check:
+    jobs:
+      - docker_build_dry_run:
+          context:
+            - docker-credentials
+          filters:
+            branches:
+              ignore: master

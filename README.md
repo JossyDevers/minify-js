@@ -1,44 +1,24 @@
-# Minify-JS Action
+[![CircleCI](https://circleci.com/gh/devatherock/minify-js.svg?style=svg)](https://circleci.com/gh/devatherock/scriptjar)
+[![Version](https://img.shields.io/docker/v/devatherock/minify-js?sort=semver)](https://hub.docker.com/r/devatherock/minify-js/)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a8694aab3fe44e6da2696ad628daf618)](https://www.codacy.com/gh/devatherock/minify-js/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=devatherock/minify-js&amp;utm_campaign=Badge_Grade)
+[![Docker Pulls](https://img.shields.io/docker/pulls/devatherock/minify-js.svg)](https://hub.docker.com/r/devatherock/minify-js/)
+[![Docker Image Size](https://img.shields.io/docker/image-size/devatherock/minify-js.svg?sort=date)](https://hub.docker.com/r/devatherock/minify-js/)
+[![Docker Image Layers](https://img.shields.io/microbadger/layers/devatherock/minify-js.svg)](https://microbadger.com/images/devatherock/minify-js)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/JossyDevers/minify-js/blob/master/LICENSE)
+# Minify-JS Github Action/CI Plugin
+Github action/CI Plugin to minify html, javascript and css files, using [minify](https://www.npmjs.com/package/minify).
 
-## Package Managers
-
-## License
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/JossyDevers/minify-js/blob/master/LICENSE) 
-
-## Version
-[![GitHub Release](https://img.shields.io/github/v/release/jossydevers/minify-js)]()
-
-Github action to minify html, javascript and css files, using [minify](https://www.npmjs.com/package/minify).
-
-### Usage
-First you need to check out your repository, then configure the Minify-JS job, at the end you can commit to your repository.
-Below is an example of how to do all of this.
-
-```yaml
-name: Minify Workflow
-on:
-  push:
-    branches: [ master ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      # Checks-out your repository
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.ref }}
-
-      # Job for Minify-JS
-      - name: Minify-JS Action
-        uses: jossydevers/minify-js@v1.0.0
-        with:
-          directory: 'src/component.js' # (OPTIONAL)
-          output: 'minify/src/' # (OPTIONAL)
-          
-      # Auto-commit to repository
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: 'Minify-JS : Commit Pipeline'
-          branch: ${{ github.ref }}
+## Usage
+### Docker
+```shell
+docker run --rm \
+  -v "/path/to/files":/work \
+  -w=/work \
+  -e PARAMETER_INPUT_PATH=/work/src \
+  -e PARAMETER_OUTPUT_PATH=/work/src \
+  -e PARAMETER_ADD_SUFFIX=false \
+  devatherock/minify-js:latest
 ```
+
+### CI
+Please refer [docs](DOCS.md)
