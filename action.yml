@@ -8,6 +8,9 @@ inputs:
   output:
     description: "Path where the minified files will be saved (By default the minified files will be saved in the original file path)"
     required: false
+  add_suffix:
+    description: "Indicates if the output files should have the suffix '.min' added after the name. Default is true"
+    required: false
 
 runs:
   using: 'docker'

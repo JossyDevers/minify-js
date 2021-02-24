@@ -11,6 +11,7 @@
 Github action to minify html, javascript and css files, using [minify](https://www.npmjs.com/package/minify).
 
 ### Usage
+#### Github Action
 First you need to check out your repository, then configure the Minify-JS job, at the end you can commit to your repository.
 Below is an example of how to do all of this.
 
@@ -42,3 +43,6 @@ jobs:
           commit_message: 'Minify-JS : Commit Pipeline'
           branch: ${{ github.ref }}
 ```
+
+#### vela/drone.io
+Please refer [docs](DOCS.md)
